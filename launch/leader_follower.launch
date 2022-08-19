@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+
+    <include file="$(find lampo_firmware)/launch/robot.launch"/>
+    
+    <node name="leader_follower_node" pkg="lampone_leader_follower_2022" type="leader_follower.py"  output="screen" respawn="false" respawn_delay="0">
+        
+    </node>
+
+</launch>
