@@ -12,6 +12,9 @@ from std_msgs.msg import String, Int32
 from geometry_msgs.msg import Twist
 
 class LeaderFollower:
+    """
+        LeaderFollower je hlavni trida pro ulohu Leader -- Follower na Campo Lampone 2022
+    """
 
     def __init__(self):
         self.bridge = cv_bridge.CvBridge()
@@ -32,8 +35,8 @@ class LeaderFollower:
     def image_callback(self, msg):
         self.image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="bgr8")
 
-    def wait_for_start(self, method=None):
-        if method is None:
+    def wait_for_start(self, method="default"):
+        if method == "default":
             r = rospy.Rate(1)
             for i in range(60):
                 r.sleep()
@@ -45,9 +48,9 @@ class LeaderFollower:
         else:
             rospy.logerror("Neznama metoda pro odstartovani ulohy")
 
-    def detect_leader(self, method=None):
+    def detect_leader(self, method="default"):
         detection_center = (0, 0, 0, 0) # (center_y, center_x, size, angle)
-        if method is None:
+        if method == "default":
             img = self.image.copy()
             blob_img = np.logical_and(np.logical_and((img[:,:,0] < 30), (img[:,:,1] < 30)), img[:,:2] > 200)
             detections = np.where(blob_img[:, blob_img.shape[1]//2 - 30 : blob_img.shape[1]//2 + 30 ])
@@ -63,10 +66,10 @@ class LeaderFollower:
         else:
             rospy.logerror("Neznama metoda pro detekci leadera")
 
-    def compute_leader_parameters(self, detection, method=None):
+    def compute_leader_parameters(self, detection, method="default"):
         leader_parameters = (30, 0, 0) # (vzdalenost, relativni_rychlost, uhel -> pouzity k natoceni kol)
         # Zakladni metoda neumi zatacet a rychlost meni nahodne.
-        if method is None:
+        if method == "default":
             distance = detection[2] // 4
             leader_parameters[0] = distance
         elif method == "custom":
@@ -78,17 +81,17 @@ class LeaderFollower:
             pass
         return leader_parameters
 
-    def compute_control_commands(self, leader_parameters, method=None):
+    def compute_control_commands(self, leader_parameters, method="default"):
         left_motor_msg = Int32()
         right_motor_msg = Int32()
-        if method is None:
-            if leader_follower[0] < 10:
+        if method == "default":
+            if leader_parameters[0] < 10:
                 left_motor_msg.data = 0
                 right_motor_msg.data = 0
-            elif leader_follower[0] < 20:
+            elif leader_parameters[0] < 20:
                 left_motor_msg.data = 20
                 right_motor_msg.data = 20
-            elif leader_follower[0] < 30:
+            elif leader_parameters[0] < 30:
                 left_motor_msg.data = 50
                 right_motor_msg.data = 50
             else:
@@ -96,7 +99,7 @@ class LeaderFollower:
                 right_motor_msg.data = 80
             pass
         elif method == "custom":
-            # TODO: Implementujte vlastní metodu, ktera parametry leadera prepocita na akcni zasahy pro jednotliva kola. 
+            # TODO: Implementujte vlastni metodu, ktera parametry leadera prepocita na akcni zasahy pro jednotliva kola. 
             #       Ty ulozte do left_motor_msg a right_motor_msg. 
             # - Tipy: - Kazde kolo ma rozsah -100 az 100. Zaporne hodnoty jsou pro couvani. Zataceni dosahnete rozdilem hodnot na kolech.
             pass
@@ -104,33 +107,44 @@ class LeaderFollower:
         self.right_motor_pub(right_motor_msg)
         pass
 
-    def stop_check(self, method=None):
-        if method is None:
+    def stop_check(self, method="default"):
+        if method == "default":
             pass
         elif method == "custom":
             # TODO: Implementujte metodu pro otestovani konce trate (robot detekuje QR kod prilis blizko po nejakou dobu a v zasade jiz stoji)
+            # Ale pozor na začátku bude také nějakou chvíli stát. Nesmí se ukončit před vyjetím.
             pass
         pass
 
+    def emeregency_stop(self):
+        # TODO: Implementujte metodu pro nouzove zastaveni
+        # Tipy: Může byt pomocí tlacitka nebo pomocí QR kódu. Pokud bude implementováýno pomocí QR kódu tak doporučuji vnořit volání do 
+        #       metody detect_leader jelikož tam už se QR kód zpracovává a tím pádem se ušetří výpočetní čas.
+        pass
+
     def run_task(self):
-        # TODO: Počkat na signál od uživatele 
-        self.wait_for_start(method=None)  # Po implementaci nastavte parametr na nazev vasi metody.
+        # TODO: Pockat na signál od uzivatele 
+        self.wait_for_start(method="default")  # Po implementaci nastavte parametr na nazev vasi metody.
 
-        # TODO: Iniciovat smyčku řešící úlohu
+        # TODO: Iniciovat smycku resici ulohu
         while True:
-            detection = self.detect_leader(method=None)
-            # TODO: Zpracovat detekci z hlediska vzdálenosti a úhlu
-            leader_parameters = self.compute_leader_parameters(detection, method=None)
-            # TODO: Údaje přetavit do ovládání robota
-            self.compute_control_commands(self, leader_parameters, method=None)
-            # TODO: Rozpoznat konec a reagovat zastavením a výpisem na display.
-            self.stop_check(method=None)
-            pass
-
-        # TODO: Vymyslet jak evaluovat performance.
+            detection = self.detect_leader(method="default")
+            # TODO: Zpracovat detekci z hlediska vzdalenosti a uhlu
+            leader_parameters = self.compute_leader_parameters(detection, method="default")
+            # TODO: Udaje pretavit do ovladani robota
+            self.compute_control_commands(self, leader_parameters, method="default")
+            # TODO: Rozpoznat konec a reagovat zastavenim a vypisem na display.
+            self.stop_check(method="default")
+            # TODO: Implementovat funkci na nouzove zastaveni.
+            self.emergency_stop()
 
 
 if __name__ == "__main__":
+    """
+        Vstupni bod aplikace.
+
+        Vytvori node v ROSu a spusti kod ulohy.
+    """
     rospy.init_node("leader_follower")
     leader_follower = LeaderFollower()
     leader_follower.run_task()
