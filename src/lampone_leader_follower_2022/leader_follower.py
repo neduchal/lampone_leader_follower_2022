@@ -119,7 +119,7 @@ class LeaderFollower:
             pass
         pass
 
-    def emeregency_stop(self):
+    def emergency_stop(self):
         # TODO: Implementujte metodu pro nouzove zastaveni
         # Tipy: Může byt pomocí tlacitka nebo pomocí QR kódu. Pokud bude implementováýno pomocí QR kódu tak doporučuji vnořit volání do 
         #       metody detect_leader jelikož tam už se QR kód zpracovává a tím pádem se ušetří výpočetní čas.
