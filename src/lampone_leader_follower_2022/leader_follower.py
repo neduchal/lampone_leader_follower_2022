@@ -49,7 +49,7 @@ class LeaderFollower:
             rospy.logerror("Neznama metoda pro odstartovani ulohy")
 
     def detect_leader(self, method="default"):
-        detection_center = (0, 0, 0, 0) # (center_y, center_x, size, angle)
+        detection_center = [0, 0, 0, 0] # (center_y, center_x, size, angle)
         if method == "default":
             img = self.image.copy()
             blob_img_B = (img[:,:,0] < 30)
@@ -70,7 +70,7 @@ class LeaderFollower:
             rospy.logerror("Neznama metoda pro detekci leadera")
 
     def compute_leader_parameters(self, detection, method="default"):
-        leader_parameters = (30, 0, 0) # (vzdalenost, relativni_rychlost, uhel -> pouzity k natoceni kol)
+        leader_parameters = [30, 0, 0] # (vzdalenost, relativni_rychlost, uhel -> pouzity k natoceni kol)
         # Zakladni metoda neumi zatacet a rychlost meni nahodne.
         if method == "default":
             distance = detection[2] // 4
