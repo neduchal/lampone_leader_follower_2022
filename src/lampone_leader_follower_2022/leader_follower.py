@@ -52,7 +52,10 @@ class LeaderFollower:
         detection_center = (0, 0, 0, 0) # (center_y, center_x, size, angle)
         if method == "default":
             img = self.image.copy()
-            blob_img = np.logical_and(np.logical_and((img[:,:,0] < 30), (img[:,:,1] < 30)), img[:,:2] > 200)
+            blob_img_B = (img[:,:,0] < 30)
+            blob_img_G = (img[:,:,1] < 30)
+            blob_img_R = (img[:,:,2] > 200)
+            blob_img = (blob_img_B + blob_img_G + blob_img_R) > 0
             detections = np.where(blob_img[:, blob_img.shape[1]//2 - 30 : blob_img.shape[1]//2 + 30 ])
             if len(detections[0]) > 0:
                 detection_center = (detections[0][0], blob_img.shape[1]// 2 - 30 + detections[1][0]) 
