@@ -106,8 +106,8 @@ class LeaderFollower:
             #       Ty ulozte do left_motor_msg a right_motor_msg. 
             # - Tipy: - Kazde kolo ma rozsah -100 az 100. Zaporne hodnoty jsou pro couvani. Zataceni dosahnete rozdilem hodnot na kolech.
             pass
-        self.left_motor_pub(left_motor_msg)
-        self.right_motor_pub(right_motor_msg)
+        self.left_motor_pub.publish(left_motor_msg)
+        self.right_motor_pub.publish(right_motor_msg)
         pass
 
     def stop_check(self, method="default"):
