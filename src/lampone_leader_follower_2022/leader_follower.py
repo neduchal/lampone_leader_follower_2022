@@ -38,7 +38,7 @@ class LeaderFollower:
     def wait_for_start(self, method="default"):
         if method == "default":
             r = rospy.Rate(1)
-            for i in range(60):
+            for i in range(10):
                 r.sleep()
             return
         elif method == "custom":
@@ -135,7 +135,7 @@ class LeaderFollower:
             # TODO: Zpracovat detekci z hlediska vzdalenosti a uhlu
             leader_parameters = self.compute_leader_parameters(detection, method="default")
             # TODO: Udaje pretavit do ovladani robota
-            self.compute_control_commands(self, leader_parameters, method="default")
+            self.compute_control_commands(leader_parameters, method="default")
             # TODO: Rozpoznat konec a reagovat zastavenim a vypisem na display.
             self.stop_check(method="default")
             # TODO: Implementovat funkci na nouzove zastaveni.
