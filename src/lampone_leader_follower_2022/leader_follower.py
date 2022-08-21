@@ -61,7 +61,7 @@ class LeaderFollower:
                 detection_center = (detections[0][0], blob_img.shape[1]// 2 - 30 + detections[1][0]) 
                 return detection_center, random.randint(80, 120), 0
             else:
-                return None
+                return 0, 0, 0
         elif method == "custom":
             # TODO: Implementujte vlastni metodu pro detekci leadera. 
             # - Tipy: Je mozne pouzit QR kod, barvu, případně jiný na obraze založený přístup. Podoba Leadera se nesmí měnit.
@@ -73,7 +73,7 @@ class LeaderFollower:
         leader_parameters = [30, 0, 0] # (vzdalenost, relativni_rychlost, uhel -> pouzity k natoceni kol)
         # Zakladni metoda neumi zatacet a rychlost meni nahodne.
         if method == "default":
-            distance = detection[2] // 4
+            distance = detection[1] // 4
             leader_parameters[0] = distance
         elif method == "custom":
             # TODO: Implementujte vlastni metodu pro prevod detekce leadera na parametry pouzitelne pro rizeni
