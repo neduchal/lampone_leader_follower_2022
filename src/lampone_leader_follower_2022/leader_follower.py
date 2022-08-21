@@ -82,6 +82,7 @@ class LeaderFollower:
             #           - K presnejsimu vypoctu ridicich zasahu muze pomoci znalost rozdilu rychlosti (je nutne vytvorit promennou typu self. )
             #           - Uhel je mozne spocitat z pozice QR kodu ci jineho poznavaciho znameni v obrazu.
             pass
+        rospy.logwarn(leader_parameters)
         return leader_parameters
 
     def compute_control_commands(self, leader_parameters, method="default"):
